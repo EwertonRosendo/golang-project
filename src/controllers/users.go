@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
@@ -23,6 +24,11 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	
+	if err = user.Prepare(); err != nil{
+		responses.ERR(w, http.StatusBadRequest, err)
+		return
+	}
+
 	db, err := database.Connect()
 	if err != nil{
 		responses.ERR(w, http.StatusInternalServerError, err)
@@ -38,10 +44,23 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	responses.JSON(w, http.StatusCreated, user)
-	//w.Write([]byte(fmt.Sprintf("id inserted %d", userID)))
 }
 func FindUsers(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("searching User!"))
+	nameOrNick := strings.ToLower(r.URL.Query().Get("user"))
+
+	db, err := database.Connect()
+	 if err != nil{
+		responses.ERR(w, http.StatusInternalServerError, err)
+		return
+	 }
+	 defer db.Close()
+	 repository := repositories.NewUserRepository(db)
+	 users, err := repository.SearchUsers(nameOrNick)
+	 if err != nil{
+		responses.ERR(w, http.StatusInternalServerError, err)
+		return
+	 }
+	 responses.JSON(w, http.StatusOK, users)
 }
 func FindUser(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("searching User by id!"))
