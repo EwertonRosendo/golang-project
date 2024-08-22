@@ -7,9 +7,6 @@ import (
 	"github.com/gorilla/mux"
 	"os"
 	"io"
-	"bytes"
-	
-	"encoding/json"
 )
 
 func SearchGoogleBooks(w http.ResponseWriter, r *http.Request) {
@@ -47,16 +44,4 @@ func SearchGoogleBooksByTitle(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(responseBody)
-}
-
-func formatJSON(data []byte) string {
-    var out bytes.Buffer
-    err := json.Indent(&out, data, "", "  ")
-
-    if err != nil {
-        fmt.Println(err)
-    }
-
-    d := out.Bytes()
-    return string(d)
 }
