@@ -20,37 +20,33 @@ func SearchGoogleBooksByTitle(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	title := vars["title"]
 	url := fmt.Sprintf("https://www.googleapis.com/books/v1/volumes?q=intitle:%s&maxResults=30&key=%s", url.QueryEscape(title), os.Getenv("GOOGLE_BOOKS_API_KEY"))
-	request, error := http.NewRequest("GET", url, nil)
-	if error != nil {
-        fmt.Println(error)
-    }
+
+	request, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		http.Error(w, "Error creating request", http.StatusInternalServerError)
+		return
+	}
+
 	request.Header.Set("Content-Type", "application/json; charset=utf-8")
 
 	client := &http.Client{}
-	response, error := client.Do(request)
-	
-	if error != nil {
-        fmt.Println(error)
-    }
-	
-	responseBody, error := io.ReadAll(response.Body)
-
-    if error != nil {
-        fmt.Println(error)
-    }
-	formattedData := formatJSON(responseBody)
-
-	//responses.JSON(w, http.StatusOK, formattedData )
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	jsonData, err := json.Marshal(formattedData)
+	response, err := client.Do(request)
 	if err != nil {
-		http.Error(w, "Error converting response to JSON", http.StatusInternalServerError)
+		http.Error(w, "Error executing request", http.StatusInternalServerError)
 		return
 	}
-	
-	w.Write(jsonData)
 	defer response.Body.Close()
+
+	responseBody, err := io.ReadAll(response.Body)
+	if err != nil {
+		http.Error(w, "Error reading response", http.StatusInternalServerError)
+		return
+	}
+
+	// Return the raw JSON response from Google Books API
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(responseBody)
 }
 
 func formatJSON(data []byte) string {
