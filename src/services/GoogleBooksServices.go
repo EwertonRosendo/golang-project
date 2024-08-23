@@ -12,7 +12,7 @@ import (
 )
 
 // Make the request to the Google Books API
-func GoogleBooksRequest(title string) ([]byte, error) {
+func GoogleBooksRequest(title string) ([]models.Book, error) {
 	apiURL := fmt.Sprintf("https://www.googleapis.com/books/v1/volumes?q=intitle:%s&maxResults=10&key=%s", url.QueryEscape(title), os.Getenv("GOOGLE_BOOKS_API_KEY"))
 
 	request, err := http.NewRequest("GET", apiURL, nil)
@@ -32,10 +32,11 @@ func GoogleBooksRequest(title string) ([]byte, error) {
 		return nil, fmt.Errorf("failed to read response body: %v", err)
 	}
 
-	return responseBody, nil
+	filteredBooks := FilterGoogleBooks(responseBody)
+
+	return filteredBooks, nil
 }
 
-// Optional: Filter and manipulate the book data
 func FilterGoogleBooks(bookList []byte) []models.Book {
 	var booksResponse models.GoogleBooksResponse
 	err := json.Unmarshal(bookList, &booksResponse)

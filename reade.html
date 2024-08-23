@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        ul li{
+            margin-top: 5px;
+        }
+        table {
+    width: 300px;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+    margin: 20px 0;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+thead {
+    background-color: #4CAF50;
+    color: white;
+}
+
+th, td {
+    padding: 10px 15px;
+    text-align: left;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+th {
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+}
+
+td {
+    border-bottom: 1px solid #ddd;
+    color: #333;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+tbody{
+    background-color: #d1d1d1;
+}
+
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>App</h1>
+    <h2>Repositories</h2>
+    <ul>
+        <li>users</li>
+    </ul>
+    <h2>Controllers</h2>
+    <ul>
+        <li>GoogleBooks</li>
+        <ul>
+            <li>SearchGoogleBooks</li>
+            <li>SearchGoogleBooksByTitle</li>
+        </ul>
+        <li>Users</li>
+        <ul>
+            <li>CreateUser</li>
+            <li>FindUsers</li>
+            <li>FindUser</li>
+            <li>UpdateUser</li>
+            <li>DeleteUser</li>
+        </ul>
+    </ul>
+    <h2>Models</h2>
+    <ul>
+        <li>User</li>
+        <ul>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Nick</th>
+                        <th>Email</th>
+                        <th>Password</th>
+                        <th>CreatedAt</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>uint64</td>
+                        <td>string</td>
+                        <td>string</td>
+                        <td>string</td>
+                        <td>string</td>
+                        <td>time.Time</td>
+                    </tr>
+                </tbody>
+            </table>
+        </ul>
+        <li>Book</li>
+        <ul>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Subtitle</th>
+                        <th>Description</th>
+                        <th>PublishedDate</th>
+                        <th>Publisher</th>
+                        <th>Thumbnail</th>
+                        <th>Authors</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>string</td>
+                        <td>string</td>
+                        <td>string</td>
+                        <td>string</td>
+                        <td>string</td>
+                        <td>string</td>
+                        <td>string</td>
+                    </tr>
+                </tbody>
+            </table>
+        </ul>
+        <li>GoogleBooksResponse</li>
+    </ul>
+    
+    <h2>Services</h2>
+    <ul>GoogleBooksServices</ul>
+</body>
+</html>

@@ -15,11 +15,8 @@ func SearchGoogleBooks(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Optional: Filter books
-	filteredBooks := services.FilterGoogleBooks(responseBody)
-
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(filteredBooks)
+	json.NewEncoder(w).Encode(responseBody)
 }
 
 // Handle the /googlebooks/{title} endpoint
@@ -33,9 +30,6 @@ func SearchGoogleBooksByTitle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Optional: Filter books
-	filteredBooks := services.FilterGoogleBooks(responseBody)
-
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(filteredBooks)
+	json.NewEncoder(w).Encode(responseBody)
 }

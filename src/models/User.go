@@ -25,16 +25,16 @@ func (user *User) Prepare() error{
 
 func (user *User) check() error{
 	if user.Name == ""{
-		return errors.New("Name can not be black")
+		return errors.New("name can not be black")
 	}
 	if user.Nick == ""{
-		return errors.New("Nick can not be black")
+		return errors.New("nick can not be black")
 	}
 	if user.Email == ""{
-		return errors.New("Email can not be black")
+		return errors.New("email can not be black")
 	}
 	if user.Password == ""{
-		return errors.New("Password can not be black")
+		return errors.New("password can not be black")
 	}
 	return nil
 }
