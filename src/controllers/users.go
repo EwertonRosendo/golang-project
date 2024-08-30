@@ -7,11 +7,12 @@ import (
 	"api/src/repositories"
 	"api/src/responses"
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
-	"errors"
+
 	"github.com/gorilla/mux"
 )
 
@@ -50,6 +51,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	responses.JSON(w, http.StatusCreated, user)
 }
 func FindUsers(w http.ResponseWriter, r *http.Request) {
+
 	nameOrNick := strings.ToLower(r.URL.Query().Get("user"))
 
 	db, err := database.Connect()

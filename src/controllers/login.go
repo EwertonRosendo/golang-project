@@ -13,6 +13,7 @@ import (
 )
 
 func Login(w http.ResponseWriter, r *http.Request){
+
 	bodyRequest , err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		responses.ERR(w, http.StatusUnprocessableEntity, err)
@@ -44,15 +45,16 @@ func Login(w http.ResponseWriter, r *http.Request){
 		responses.ERR(w, http.StatusUnauthorized, err)
 		return
 	}
+	authentication.CreateAccessTokenCookie(w, r, userFromDataBase.ID)
 	
 	token, err := authentication.CreateToken(userFromDataBase.ID)
 	if err != nil{
 		responses.ERR(w, http.StatusInternalServerError, err)
 		return
 	}
-	var user_token models.Token
-	user_token.Token = token
+	var user_refresh_token models.Token
+	user_refresh_token.RefreshToken = token
 
-	responses.JSON(w, http.StatusAccepted, user_token)
+	responses.JSON(w, http.StatusAccepted, user_refresh_token)
 
 }
