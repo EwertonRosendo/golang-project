@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"api/src/authentication"
 	"api/src/database"
 	"api/src/models"
 	"api/src/repositories"
@@ -8,7 +9,10 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 	"strings"
+	"errors"
+	"github.com/gorilla/mux"
 )
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
@@ -24,7 +28,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	
-	if err = user.Prepare(); err != nil{
+	if err = user.Prepare("signup"); err != nil{
 		responses.ERR(w, http.StatusBadRequest, err)
 		return
 	}
@@ -63,11 +67,110 @@ func FindUsers(w http.ResponseWriter, r *http.Request) {
 	 responses.JSON(w, http.StatusOK, users)
 }
 func FindUser(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("searching User by id!"))
+	params := mux.Vars(r)
+
+	userID, err := strconv.ParseUint(params["user_id"], 10, 64)
+	if err != nil {
+		responses.ERR(w, http.StatusBadRequest, err)
+		return
+	}
+	db, err := database.Connect()
+	 if err != nil{
+		responses.ERR(w, http.StatusInternalServerError, err)
+		return
+	 }
+	 defer db.Close()
+
+	 repository := repositories.NewUserRepository(db)
+	 user, err := repository.FindUserById(userID)
+
+	 if err != nil{
+		responses.ERR(w, http.StatusInternalServerError, err)
+		return
+	}
+	responses.JSON(w, http.StatusOK, user)
 }
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Updating User!"))
+	params := mux.Vars(r)
+
+	userID, err := strconv.ParseUint(params["user_id"], 10, 64)
+	if err != nil {
+		responses.ERR(w, http.StatusBadRequest,  err)
+		return
+	}
+
+	tokenUserID, err := authentication.ExtractUserID(r)
+	if err != nil {
+		responses.ERR(w, http.StatusUnauthorized,  err)
+		return
+	}
+	if userID != tokenUserID {
+		responses.ERR(w, http.StatusForbidden, errors.New("you can not update another user"))
+		return
+	}
+
+	bodyRequest, err := ioutil.ReadAll(r.Body)
+	if err != nil{
+		responses.ERR(w, http.StatusBadRequest, err)
+		return
+	}
+
+	var user models.User
+	if err = json.Unmarshal(bodyRequest, &user); err!= nil {
+		responses.ERR(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if err = user.Prepare("update"); err != nil {
+		responses.ERR(w, http.StatusBadRequest, err)
+		return
+	}
+	db, err := database.Connect()
+	 if err != nil{
+		responses.ERR(w, http.StatusInternalServerError, err)
+		return
+	 }
+	 defer db.Close()
+
+	 repository := repositories.NewUserRepository(db)
+	 if err = repository.Update(userID, user); err != nil{
+		responses.ERR(w, http.StatusInternalServerError, err)
+		return
+	 }
+
+	 responses.JSON(w, http.StatusNoContent, nil)
 }
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("deleting User!"))
+	params := mux.Vars(r)
+	userID, err := strconv.ParseUint(params["user_id"], 10, 64)
+
+	if err != nil{
+		responses.ERR(w, http.StatusBadRequest, err)
+	}
+
+	tokenUserID, err := authentication.ExtractUserID(r)
+	if err != nil {
+		responses.ERR(w, http.StatusUnauthorized,  err)
+		return
+	}
+	if userID != tokenUserID {
+		responses.ERR(w, http.StatusForbidden, errors.New("you can not delete another user"))
+		return
+	}
+
+	db, err := database.Connect()
+	 if err != nil{
+		responses.ERR(w, http.StatusInternalServerError, err)
+		return
+	 }
+	 defer db.Close()
+
+	 repository := repositories.NewUserRepository(db)
+	 if err = repository.Delete(userID); err != nil {
+		responses.ERR(w, http.StatusInternalServerError, err)
+		return
+	 }
+
+	 responses.JSON(w, http.StatusNoContent, nil)
+
 }

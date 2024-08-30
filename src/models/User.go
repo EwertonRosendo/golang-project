@@ -1,9 +1,12 @@
 package models
 
 import (
-	"time"
+	"api/src/validations"
+	"errors"
 	"strings"
-	"errors"	
+	"time"
+
+	"github.com/badoux/checkmail"
 )
 
 type User struct {
@@ -15,15 +18,17 @@ type User struct {
 	CreatedAt time.Time `json:"CreatedAt,omitempty"`
 }
 
-func (user *User) Prepare() error{
-	if err := user.check(); err != nil{
+func (user *User) Prepare(step string) error{
+	if err := user.check(step); err != nil{
 		return err
 	}
-	user.format()
+	if err := user.format(step); err != nil {
+		return err
+	}
 	return nil
 }
 
-func (user *User) check() error{
+func (user *User) check(step string) error{
 	if user.Name == ""{
 		return errors.New("name can not be black")
 	}
@@ -33,14 +38,28 @@ func (user *User) check() error{
 	if user.Email == ""{
 		return errors.New("email can not be black")
 	}
-	if user.Password == ""{
+
+	if err := checkmail.ValidateFormat(user.Email); err != nil {
+		return err
+	}
+
+	if step == "signup" && user.Password == ""{
 		return errors.New("password can not be black")
 	}
 	return nil
 }
 
-func (user *User) format(){
+func (user *User) format(step string) error {
 	user.Name = strings.TrimSpace(user.Name)
 	user.Email = strings.TrimSpace(user.Email)
-	user.Nick = strings.TrimSpace(user.Nick) 
+	user.Nick = strings.TrimSpace(user.Nick)
+
+	if step == "signup"{
+		hashPassword, err := validations.Hash(user.Password)
+		if err != nil{
+			return err
+		}	
+		user.Password = string(hashPassword)
+	}
+	return nil
 }

@@ -21,11 +21,11 @@ func SearchGoogleBooks(w http.ResponseWriter, r *http.Request) {
 
 // Handle the /googlebooks/{title} endpoint
 func SearchGoogleBooksByTitle(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	title := vars["title"]
+	vars 	:= mux.Vars(r)
+	title 	:= vars["title"]
 
 	responseBody, err := services.GoogleBooksRequest(title)
-	if err != nil {
+	if 	err != nil {
 		http.Error(w, "Failed to fetch books", http.StatusInternalServerError)
 		return
 	}
