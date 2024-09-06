@@ -12,17 +12,9 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 )
 
+// access token
 func CreateToken(userID uint64) (string, error){
 
-	permissions_access_token := jwt.MapClaims{}
-	permissions_access_token["authorized"] = true
-	permissions_access_token["exp"] = time.Now().Add(time.Hour * 6).Unix()
-	permissions_access_token["user_id"] = userID
-
-	access_token := jwt.NewWithClaims(jwt.SigningMethodHS256, permissions_access_token)
-	fmt.Println(access_token.SignedString([]byte(config.SecretKey)))
-
-	// refrest token
 	permissions := jwt.MapClaims{}
 	permissions["authorized"] = true
 	permissions["exp"] = time.Now().Add(time.Hour * 6).Unix()
@@ -62,7 +54,6 @@ func ExtractUserID(r *http.Request) (uint64, error) {
 		if is_access_token_valid := VerifyAccessToken(r, userID); is_access_token_valid != nil {
 			return 0, errors.New("invalid token")	
 		}
-		fmt.Print("usuario validado por ambos tokens") 
 		return userID, nil
 	}
 	return 0, errors.New("invalid token")
@@ -94,7 +85,6 @@ func VerifyAccessToken(r *http.Request, userID uint64) error {
     }
 	stringAccessToken := cookie.Value
 	token, err := jwt.Parse(stringAccessToken, returnVerificationKey)
-	fmt.Println("O TOKEN DE ACESSO É :", stringAccessToken)
 	if err != nil {
 		return err
 	}
@@ -115,7 +105,7 @@ func CreateAccessTokenCookie(w http.ResponseWriter, r *http.Request, userID uint
         Name:     token_name,
         Value:    access_token,
         Path:     "/",
-        MaxAge:   3600,
+        MaxAge:   2450000,
         HttpOnly: true,
         Secure:   true,
         SameSite: http.SameSiteLaxMode,
@@ -136,3 +126,19 @@ func CreateAcessToken(userID uint64) (string, error){
 	return access_token.SignedString([]byte(config.SecretKey))
 } 
 
+func RefreshToken(r *http.Request, userID uint64) (string, error) {
+	if err := TokenValidation(r); err != nil{
+		
+		if err := VerifyAccessToken(r, userID); err != nil {
+			return "", err
+		}
+		token, err := CreateToken(userID)
+		if err != nil {
+			return "", err
+		}
+		return token, nil
+	}
+
+	return extractToken(r), nil
+
+}

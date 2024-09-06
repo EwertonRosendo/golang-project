@@ -8,7 +8,7 @@ import (
 	"api/src/responses"
 	"encoding/json"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strconv"
 	"strings"
@@ -17,7 +17,7 @@ import (
 )
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
-	bodyRequest, err := ioutil.ReadAll(r.Body)
+	bodyRequest, err := io.ReadAll(r.Body)
 	if err != nil{
 		responses.ERR(w, http.StatusUnprocessableEntity, err)
 		return
@@ -111,7 +111,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	bodyRequest, err := ioutil.ReadAll(r.Body)
+	bodyRequest, err := io.ReadAll(r.Body)
 	if err != nil{
 		responses.ERR(w, http.StatusBadRequest, err)
 		return

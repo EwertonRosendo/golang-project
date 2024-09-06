@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"github.com/rs/cors"
 	//"crypto/rand"
 )
 /*
@@ -21,10 +22,18 @@ func init(){
 }
 */
 
-func main(){
-	config.Load()
-	r := router.Generate()
+func main() {
+    config.Load()
+    r := router.Generate()
 
-	fmt.Printf("listening on port: 5000")
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.Port), r))
+    c := cors.New(cors.Options{
+        AllowedOrigins:   []string{"*"},
+        AllowCredentials: true,
+        AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
+    })
+
+    handler := c.Handler(r)
+
+    fmt.Printf("listening on port: 5000")
+    log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.Port), handler))
 }

@@ -55,6 +55,15 @@ func Login(w http.ResponseWriter, r *http.Request){
 	var user_refresh_token models.Token
 	user_refresh_token.RefreshToken = token
 
-	responses.JSON(w, http.StatusAccepted, user_refresh_token)
+	var login_data models.LoginData
+
+	login_data.ID = userFromDataBase.ID
+	login_data.Name = userFromDataBase.Name		
+	login_data.Nick = userFromDataBase.Nick
+	login_data.Email = userFromDataBase.Email
+	login_data.UserImage = "still no image"
+	login_data.RefreshToken = token
+
+	responses.JSON(w, http.StatusAccepted, login_data)
 
 }

@@ -5,46 +5,44 @@ import (
 	"api/src/models"
 	"api/src/repositories"
 	"api/src/responses"
-	"api/src/services"
+	"fmt"
+
+	//"fmt"
+	//"os"
+	//"api/src/services"
 	"encoding/json"
-	
 	"io"
 	"net/http"
-
-	"github.com/gorilla/mux"
+	//"github.com/gorilla/mux"
 )
 
 // Handle the /googlebooks endpoint
-func SearchGoogleBooks(w http.ResponseWriter, r *http.Request) {
-	
-	responseBody, err := services.GoogleBooksRequest("GOOGLE")
-	if err != nil {
-		http.Error(w, "Failed to fetch books", http.StatusInternalServerError)
+func SearchBooks(w http.ResponseWriter, r *http.Request) {
+	db, err := database.Connect()
+	 if err != nil{
+		responses.ERR(w, http.StatusInternalServerError, err)
 		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(responseBody)
+	 }
+	 defer db.Close()
+	 repository := repositories.NewBookRepository(db)
+	 books, err := repository.SearchBooks()
+	 if err != nil{
+		responses.ERR(w, http.StatusInternalServerError, err)
+		return
+	 }
+	 responses.JSON(w, http.StatusOK, books)
 }
 
 // Handle the /googlebooks/{title} endpoint
-func SearchGoogleBooksByTitle(w http.ResponseWriter, r *http.Request) {
-	vars 	:= mux.Vars(r)
-	title 	:= vars["title"]
-
-	responseBody, err := services.GoogleBooksRequest(title)
-	if 	err != nil {
-		http.Error(w, "Failed to fetch books", http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(responseBody)
+func SearchBooksByTitle(w http.ResponseWriter, r *http.Request) {
+	
 }
 
 // add a book from google books api to our database
-func AddGoogleBook(w http.ResponseWriter, r *http.Request) {
+func AddBook(w http.ResponseWriter, r *http.Request) {
 	bodyRequest, err := io.ReadAll(r.Body)
+
+	fmt.Println("params: ", string(bodyRequest))
 
 	if err != nil{
 		responses.ERR(w, http.StatusUnprocessableEntity, err)
@@ -75,4 +73,5 @@ func AddGoogleBook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	responses.JSON(w, http.StatusCreated, book)
+
 }

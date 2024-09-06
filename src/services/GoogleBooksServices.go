@@ -51,8 +51,8 @@ func FilterGoogleBooks(bookList []byte) []models.Book {
 			Title:         item.VolumeInfo.Title,
 			Subtitle:      item.VolumeInfo.Subtitle,
 			Description:   item.VolumeInfo.Description,
-			Authors:       item.VolumeInfo.Authors,
-			PublishedDate: item.VolumeInfo.PublishedDate,
+			Authors:       item.VolumeInfo.Authors[0],
+			Published_at: item.VolumeInfo.PublishedDate,
 			Publisher:     item.VolumeInfo.Publisher,
 			Thumbnail:     item.VolumeInfo.ImageLinks.Thumbnail,
 		}
