@@ -95,3 +95,42 @@ func (repository Books) FindBookById(ID uint64) (models.Book, error) {
 	}
 	return book, nil
 }
+
+func (repository Books) Delete(ID uint64) error {
+	statement, err := repository.db.Prepare("delete from books where id = ?")
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	if _, err = statement.Exec(ID); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (repository Books) Update(ID uint64, book models.Book) error {
+	statement, err := repository.db.Prepare("update books set title = ?, subtitle = ?, description = ?, published_at = ?, publisher = ?, author = ? where id = ?",)
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	if _, err = statement.Exec(book.Title, book.Subtitle, book.Description, book.Published_at, book.Publisher, book.Authors, ID); err != nil{
+		return err
+	}
+	return nil
+}
+
+func (repository Books) UpdateThumbnail(ID uint64, book models.Book) error {
+	statement, err := repository.db.Prepare("update books set cover = ? where id = ?",)
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	if _, err = statement.Exec(book.Title+".jpg", ID); err != nil{
+		return err
+	}
+	return nil
+}

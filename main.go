@@ -23,7 +23,8 @@ func init(){
 */
 
 func main() {
-    config.Load()
+    
+	config.Load()
     r := router.Generate()
 
     c := cors.New(cors.Options{
@@ -36,4 +37,6 @@ func main() {
 
     fmt.Printf("listening on port: 5000")
     log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.Port), handler))
+
+	
 }

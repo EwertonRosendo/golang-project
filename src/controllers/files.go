@@ -76,10 +76,15 @@ func SaveFile(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, errStr)
 		return
 	}
+	fmt.Print("tentando remover o arquivo ", book.Thumbnail)
+	err = os.Remove(fmt.Sprintf("static/%s", book.Thumbnail))
+    if err != nil { 
+        fmt.Println(err)
+    } 
 
 	// 3. Create a new file in the images directory
 	//dst, err := os.Create(fmt.Sprintf("images/%s", handler.Filename))
-	dst, err := os.Create(fmt.Sprintf("images/%s", (book.Title+".jpg")))
+	dst, err := os.Create(fmt.Sprintf("static/%s", (book.Title+".jpg")))
 	if err != nil {
 		errStr := fmt.Sprintf("Error creating file: %s\n", err)
 		fmt.Println(errStr)
@@ -97,6 +102,16 @@ func SaveFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 5. Respond to the client that the file was saved successfully
+	fmt.Println("change the cover image name")
+	err = repository.UpdateThumbnail(book.ID, book)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+
 	fmt.Fprintf(w, "File uploaded successfully: %s\n", handler.Filename)
 	fmt.Println("File saved successfully")
 }
+
+
+

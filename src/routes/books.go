@@ -7,9 +7,27 @@ import (
 
 var books = []Routes{
 	{
+		URI:                   "/books/{book_id}",
+		Method:                http.MethodDelete,
+		Function:              controllers.DeleteBook,
+		RequestAuthentication: false,
+	},
+	{
+		URI:                   "/books/{book_id}",
+		Method:                http.MethodPut,
+		Function:              controllers.UpdateBook,
+		RequestAuthentication: false,
+	},
+	{
 		URI:                   "/books",
 		Method:                http.MethodGet,
 		Function:              controllers.SearchBooks,
+		RequestAuthentication: false,
+	},
+	{
+		URI:                   "/books/{book_id}",
+		Method:                http.MethodGet,
+		Function:              controllers.FindBookById,
 		RequestAuthentication: false,
 	},
 	{

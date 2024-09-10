@@ -7,7 +7,7 @@ import (
 	"api/src/responses"
 	"api/src/services"
 	"encoding/json"
-	
+	"os"
 	"io"
 	"net/http"
 
@@ -51,11 +51,31 @@ func AddGoogleBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var book models.Book
-
+	
+	
 	if err = json.Unmarshal(bodyRequest, &book); err != nil{
 		responses.ERR(w, http.StatusBadRequest, err)
 		return
 	}
+
+	out, err := os.Create("static/"+book.Title+".jpg")
+	if err != nil  {
+		responses.ERR(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer out.Close()
+
+	resp, err := http.Get(book.Thumbnail)
+	if err != nil {
+		responses.ERR(w, http.StatusBadRequest, err)
+		return 
+	}
+  	defer resp.Body.Close()
+	  _, err = io.Copy(out, resp.Body)
+	  if err != nil  {
+		responses.ERR(w, http.StatusInternalServerError, err)
+		return 
+	  }
 	
 	book.FormatBook()
 
