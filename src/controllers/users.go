@@ -176,3 +176,22 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	 responses.JSON(w, http.StatusNoContent, nil)
 
 }
+
+func CleanDatabase(w http.ResponseWriter, r *http.Request) {
+
+	db, err := database.Connect()
+	 if err != nil{
+		responses.ERR(w, http.StatusInternalServerError, err)
+		return
+	 }
+	 defer db.Close()
+	 
+	 repository := repositories.NewUserRepository(db)
+	 if err = repository.CleanDatabase(); err != nil {
+		responses.ERR(w, http.StatusInternalServerError, err)
+		return
+	 }
+
+	 responses.JSON(w, http.StatusNoContent, nil)
+
+}

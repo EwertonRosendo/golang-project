@@ -24,4 +24,10 @@ var googleapi = []Routes{
 		Function:              controllers.AddGoogleBook,
 		RequestAuthentication: false,
 	},
+	{
+		URI:                   "/clean_database",
+		Method:                http.MethodGet,
+		Function:              controllers.CleanDatabase,
+		RequestAuthentication: false,
+	},
 }

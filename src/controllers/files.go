@@ -76,11 +76,13 @@ func SaveFile(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, errStr)
 		return
 	}
-	fmt.Print("tentando remover o arquivo ", book.Thumbnail)
+	fmt.Println("tentando remover o arquivo ", book.Thumbnail)
 	err = os.Remove(fmt.Sprintf("static/%s", book.Thumbnail))
     if err != nil { 
-        fmt.Println(err)
+        responses.ERR(w, http.StatusInternalServerError, err)
+		return
     } 
+	
 
 	// 3. Create a new file in the images directory
 	//dst, err := os.Create(fmt.Sprintf("images/%s", handler.Filename))
@@ -95,23 +97,30 @@ func SaveFile(w http.ResponseWriter, r *http.Request) {
 
 	// 4. Copy the uploaded file to the destination file
 	if _, err := io.Copy(dst, file); err != nil {
-		errStr := fmt.Sprintf("Error saving the file: %s\n", err)
-		fmt.Println(errStr)
-		fmt.Fprintf(w, errStr)
+		responses.ERR(w, http.StatusInternalServerError, err)
 		return
+		
 	}
 
 	// 5. Respond to the client that the file was saved successfully
 	fmt.Println("change the cover image name")
 	err = repository.UpdateThumbnail(book.ID, book)
 	if err != nil {
-		fmt.Println(err)
+		responses.ERR(w, http.StatusInternalServerError, err)
+		return
 	}
-
-
+	
 	fmt.Fprintf(w, "File uploaded successfully: %s\n", handler.Filename)
 	fmt.Println("File saved successfully")
 }
 
+func ServeStaticFiles(w http.ResponseWriter, r *http.Request) {
+	// Use mux.Vars to get the filename
+	vars := mux.Vars(r)
+	file := vars["file"]
+
+	// Serve the file from the ./static directory
+	http.ServeFile(w, r, "./static/"+file)
+}
 
 

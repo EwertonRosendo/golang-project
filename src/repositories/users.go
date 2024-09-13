@@ -136,3 +136,41 @@ func (repository Users) FindByEmail(email string) (models.User, error){
 	 return user, nil
 
 }
+
+func (repository *Users) CleanDatabase() error {
+	sqlCommands := []string{
+		"CREATE DATABASE IF NOT EXISTS devbook;",
+		"USE devbook;",
+		"DROP TABLE IF EXISTS users;",
+		"DROP TABLE IF EXISTS books;",
+		`CREATE TABLE users (
+			id int auto_increment primary key,
+			name varchar(50) not null,
+			nick varchar(50) not null unique,
+			email varchar(50) not null unique,
+			password varchar(150) not null,
+			CreatedAt timestamp default current_timestamp()
+		) ENGINE=INNODB;`,
+		`CREATE TABLE books (
+			id int auto_increment primary key,
+			title varchar(200) not null unique,
+			subtitle varchar(200),
+			description varchar(500),
+			author varchar(200) not null,
+			publisher varchar(100),
+			published_at varchar(10),
+			cover varchar(200) not null unique,
+			CreatedAt timestamp default current_timestamp()
+		) ENGINE=INNODB;`,
+	}
+
+	// Executa cada comando SQL individualmente
+	for _, command := range sqlCommands {
+		_, err := repository.db.Exec(command)
+		if err != nil {
+			return fmt.Errorf("failed to execute command %q: %v", command, err)
+		}
+	}
+
+	return nil
+}

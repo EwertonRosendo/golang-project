@@ -128,7 +128,7 @@ func (repository Books) UpdateThumbnail(ID uint64, book models.Book) error {
 		return err
 	}
 	defer statement.Close()
-
+	
 	if _, err = statement.Exec(book.Title+".jpg", ID); err != nil{
 		return err
 	}
