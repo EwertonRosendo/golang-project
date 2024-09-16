@@ -18,4 +18,16 @@ var googleapi = []Routes{
 		Function:              controllers.SearchGoogleBooksByTitle,
 		RequestAuthentication: false,
 	},
+	{
+		URI:                   "/googlebooks/add",
+		Method:                http.MethodPost,
+		Function:              controllers.AddGoogleBook,
+		RequestAuthentication: false,
+	},
+	{
+		URI:                   "/clean_database",
+		Method:                http.MethodGet,
+		Function:              controllers.CleanDatabase,
+		RequestAuthentication: false,
+	},
 }

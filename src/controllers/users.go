@@ -7,16 +7,17 @@ import (
 	"api/src/repositories"
 	"api/src/responses"
 	"encoding/json"
-	"io/ioutil"
+	"errors"
+	"io"
 	"net/http"
 	"strconv"
 	"strings"
-	"errors"
+
 	"github.com/gorilla/mux"
 )
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
-	bodyRequest, err := ioutil.ReadAll(r.Body)
+	bodyRequest, err := io.ReadAll(r.Body)
 	if err != nil{
 		responses.ERR(w, http.StatusUnprocessableEntity, err)
 		return
@@ -50,6 +51,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	responses.JSON(w, http.StatusCreated, user)
 }
 func FindUsers(w http.ResponseWriter, r *http.Request) {
+
 	nameOrNick := strings.ToLower(r.URL.Query().Get("user"))
 
 	db, err := database.Connect()
@@ -109,7 +111,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	bodyRequest, err := ioutil.ReadAll(r.Body)
+	bodyRequest, err := io.ReadAll(r.Body)
 	if err != nil{
 		responses.ERR(w, http.StatusBadRequest, err)
 		return
@@ -167,6 +169,25 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 
 	 repository := repositories.NewUserRepository(db)
 	 if err = repository.Delete(userID); err != nil {
+		responses.ERR(w, http.StatusInternalServerError, err)
+		return
+	 }
+
+	 responses.JSON(w, http.StatusNoContent, nil)
+
+}
+
+func CleanDatabase(w http.ResponseWriter, r *http.Request) {
+
+	db, err := database.Connect()
+	 if err != nil{
+		responses.ERR(w, http.StatusInternalServerError, err)
+		return
+	 }
+	 defer db.Close()
+	 
+	 repository := repositories.NewUserRepository(db)
+	 if err = repository.CleanDatabase(); err != nil {
 		responses.ERR(w, http.StatusInternalServerError, err)
 		return
 	 }
