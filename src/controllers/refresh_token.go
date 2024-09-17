@@ -12,36 +12,35 @@ import (
 )
 
 func RefreshToken(w http.ResponseWriter, r *http.Request) {
-    // Accessing the headers
-    authHeader := r.Header.Get("Authorization")
-    fmt.Println("Authorization Header:", authHeader)
-    
-    // Example of accessing a custom header, e.g., "X-Custom-Header"
-    customHeader := r.Header.Get("X-Custom-Header")
-    fmt.Println("Custom Header:", customHeader)
+	// Accessing the headers
+	authHeader := r.Header.Get("Authorization")
+	fmt.Println("Authorization Header:", authHeader)
 
-    params := mux.Vars(r)
-    userID, err := strconv.ParseUint(params["user_id"], 10, 64)
-    fmt.Println("User ID:", userID)
+	// Example of accessing a custom header, e.g., "X-Custom-Header"
+	customHeader := r.Header.Get("X-Custom-Header")
+	fmt.Println("Custom Header:", customHeader)
 
-    if err != nil {
-        responses.ERR(w, http.StatusInternalServerError, err)
-        return
-    }
+	params := mux.Vars(r)
+	userID, err := strconv.ParseUint(params["user_id"], 10, 64)
+	fmt.Println("User ID:", userID)
 
-    refresh_token, err := authentication.RefreshToken(r, userID)
+	if err != nil {
+		responses.ERR(w, http.StatusInternalServerError, err)
+		return
+	}
 
-    if err != nil {
-        responses.ERR(w, http.StatusInternalServerError, err)
-        return
-    }
+	refresh_token, err := authentication.RefreshToken(r, userID)
 
-    refresh_token_obj := models.Token{RefreshToken: refresh_token}
+	if err != nil {
+		responses.ERR(w, http.StatusInternalServerError, err)
+		return
+	}
 
-    responses.JSON(w, http.StatusAccepted, refresh_token_obj)
+	refresh_token_obj := models.Token{RefreshToken: refresh_token}
+
+	responses.JSON(w, http.StatusAccepted, refresh_token_obj)
 }
 
 func Teste(w http.ResponseWriter, r *http.Request) {
-    responses.JSON(w, http.StatusAccepted, models.User{Nick: "TESTE"} )
+	responses.JSON(w, http.StatusAccepted, models.User{Nick: "TESTE"})
 }
-

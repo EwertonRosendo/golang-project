@@ -7,16 +7,16 @@ import (
 	"api/src/responses"
 	"api/src/services"
 	"encoding/json"
-	"os"
 	"io"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
 )
 
 // Handle the /googlebooks endpoint
 func SearchGoogleBooks(w http.ResponseWriter, r *http.Request) {
-	
+
 	responseBody, err := services.GoogleBooksRequest("GOOGLE")
 	if err != nil {
 		http.Error(w, "Failed to fetch books", http.StatusInternalServerError)
@@ -29,11 +29,11 @@ func SearchGoogleBooks(w http.ResponseWriter, r *http.Request) {
 
 // Handle the /googlebooks/{title} endpoint
 func SearchGoogleBooksByTitle(w http.ResponseWriter, r *http.Request) {
-	vars 	:= mux.Vars(r)
-	title 	:= vars["title"]
+	vars := mux.Vars(r)
+	title := vars["title"]
 
 	responseBody, err := services.GoogleBooksRequest(title)
-	if 	err != nil {
+	if err != nil {
 		http.Error(w, "Failed to fetch books", http.StatusInternalServerError)
 		return
 	}
@@ -46,20 +46,19 @@ func SearchGoogleBooksByTitle(w http.ResponseWriter, r *http.Request) {
 func AddGoogleBook(w http.ResponseWriter, r *http.Request) {
 	bodyRequest, err := io.ReadAll(r.Body)
 
-	if err != nil{
+	if err != nil {
 		responses.ERR(w, http.StatusUnprocessableEntity, err)
 		return
 	}
 	var book models.Book
-	
-	
-	if err = json.Unmarshal(bodyRequest, &book); err != nil{
+
+	if err = json.Unmarshal(bodyRequest, &book); err != nil {
 		responses.ERR(w, http.StatusBadRequest, err)
 		return
 	}
 
-	out, err := os.Create("static/"+book.Title+".jpg")
-	if err != nil  {
+	out, err := os.Create("static/" + book.Title + ".jpg")
+	if err != nil {
 		responses.ERR(w, http.StatusInternalServerError, err)
 		return
 	}
@@ -68,19 +67,19 @@ func AddGoogleBook(w http.ResponseWriter, r *http.Request) {
 	resp, err := http.Get(book.Thumbnail)
 	if err != nil {
 		responses.ERR(w, http.StatusBadRequest, err)
-		return 
+		return
 	}
-  	defer resp.Body.Close()
-	  _, err = io.Copy(out, resp.Body)
-	  if err != nil  {
+	defer resp.Body.Close()
+	_, err = io.Copy(out, resp.Body)
+	if err != nil {
 		responses.ERR(w, http.StatusInternalServerError, err)
-		return 
-	  }
-	
+		return
+	}
+
 	book.FormatBook()
 
 	db, err := database.Connect()
-	if err != nil{
+	if err != nil {
 		responses.ERR(w, http.StatusInternalServerError, err)
 		return
 	}
@@ -88,8 +87,8 @@ func AddGoogleBook(w http.ResponseWriter, r *http.Request) {
 
 	repository := repositories.NewBookRepository(db)
 	book.ID, err = repository.Create(book)
-	
-	if err != nil{
+
+	if err != nil {
 		responses.ERR(w, http.StatusInternalServerError, err)
 		return
 	}

@@ -1,20 +1,20 @@
 package controllers
 
 import (
+	"api/src/authentication"
 	"api/src/database"
 	"api/src/models"
 	"api/src/repositories"
 	"api/src/responses"
 	"api/src/validations"
-	"api/src/authentication"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
 )
 
-func Login(w http.ResponseWriter, r *http.Request){
+func Login(w http.ResponseWriter, r *http.Request) {
 
-	bodyRequest , err := ioutil.ReadAll(r.Body)
+	bodyRequest, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		responses.ERR(w, http.StatusUnprocessableEntity, err)
 		return
@@ -23,7 +23,7 @@ func Login(w http.ResponseWriter, r *http.Request){
 	if err = json.Unmarshal(bodyRequest, &user); err != nil {
 		responses.ERR(w, http.StatusBadRequest, err)
 	}
-	
+
 	db, err := database.Connect()
 	if err != nil {
 		responses.ERR(w, http.StatusInternalServerError, err)
@@ -40,15 +40,15 @@ func Login(w http.ResponseWriter, r *http.Request){
 		responses.ERR(w, http.StatusInternalServerError, err)
 		return
 	}
-	
-	if err = validations.ValidatePassword(userFromDataBase.Password, user.Password);err != nil{
+
+	if err = validations.ValidatePassword(userFromDataBase.Password, user.Password); err != nil {
 		responses.ERR(w, http.StatusUnauthorized, err)
 		return
 	}
 	authentication.CreateAccessTokenCookie(w, r, userFromDataBase.ID)
-	
+
 	token, err := authentication.CreateToken(userFromDataBase.ID)
-	if err != nil{
+	if err != nil {
 		responses.ERR(w, http.StatusInternalServerError, err)
 		return
 	}
@@ -58,7 +58,7 @@ func Login(w http.ResponseWriter, r *http.Request){
 	var login_data models.LoginData
 
 	login_data.ID = userFromDataBase.ID
-	login_data.Name = userFromDataBase.Name		
+	login_data.Name = userFromDataBase.Name
 	login_data.Nick = userFromDataBase.Nick
 	login_data.Email = userFromDataBase.Email
 	login_data.UserImage = "still no image"

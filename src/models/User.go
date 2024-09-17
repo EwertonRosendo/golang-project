@@ -18,8 +18,8 @@ type User struct {
 	CreatedAt time.Time `json:"CreatedAt,omitempty"`
 }
 
-func (user *User) Prepare(step string) error{
-	if err := user.check(step); err != nil{
+func (user *User) Prepare(step string) error {
+	if err := user.check(step); err != nil {
 		return err
 	}
 	if err := user.format(step); err != nil {
@@ -28,14 +28,14 @@ func (user *User) Prepare(step string) error{
 	return nil
 }
 
-func (user *User) check(step string) error{
-	if user.Name == ""{
+func (user *User) check(step string) error {
+	if user.Name == "" {
 		return errors.New("name can not be black")
 	}
-	if user.Nick == ""{
+	if user.Nick == "" {
 		return errors.New("nick can not be black")
 	}
-	if user.Email == ""{
+	if user.Email == "" {
 		return errors.New("email can not be black")
 	}
 
@@ -43,7 +43,7 @@ func (user *User) check(step string) error{
 		return err
 	}
 
-	if step == "signup" && user.Password == ""{
+	if step == "signup" && user.Password == "" {
 		return errors.New("password can not be black")
 	}
 	return nil
@@ -54,11 +54,11 @@ func (user *User) format(step string) error {
 	user.Email = strings.TrimSpace(user.Email)
 	user.Nick = strings.TrimSpace(user.Nick)
 
-	if step == "signup"{
+	if step == "signup" {
 		hashPassword, err := validations.Hash(user.Password)
-		if err != nil{
+		if err != nil {
 			return err
-		}	
+		}
 		user.Password = string(hashPassword)
 	}
 	return nil

@@ -10,27 +10,27 @@ type Users struct {
 	db *sql.DB
 }
 
-func NewUserRepository(db *sql.DB) *Users{
+func NewUserRepository(db *sql.DB) *Users {
 	return &Users{db}
 }
 
-func (repository Users) Create (user models.User) (uint64, error){
+func (repository Users) Create(user models.User) (uint64, error) {
 	statement, err := repository.db.Prepare("insert into users (name, nick, email, password) values (?, ?, ?, ?)")
 
-	if err !=  nil{
-		return 0, err 
+	if err != nil {
+		return 0, err
 	}
 	defer statement.Close()
 
 	result, err := statement.Exec(user.Name, user.Nick, user.Email, user.Password)
 
-	if err !=  nil{
-		return 0, err 
+	if err != nil {
+		return 0, err
 	}
 
 	lastCreatedID, err := result.LastInsertId()
-	if err !=  nil{
-		return 0, err 
+	if err != nil {
+		return 0, err
 	}
 
 	return uint64(lastCreatedID), nil
@@ -68,7 +68,7 @@ func (repository Users) SearchUsers(nameOrNick string) ([]models.User, error) {
 func (repository Users) FindUserById(ID uint64) (models.User, error) {
 	rows, err := repository.db.Query(
 		"select id, name, nick, email, CreatedAt from users where id = ?",
-		ID, 
+		ID,
 	)
 	if err != nil {
 		return models.User{}, err
@@ -93,13 +93,13 @@ func (repository Users) FindUserById(ID uint64) (models.User, error) {
 }
 
 func (repository Users) Update(ID uint64, user models.User) error {
-	statement, err := repository.db.Prepare("update users set name = ?, nick = ?, email = ? where id = ?",)
+	statement, err := repository.db.Prepare("update users set name = ?, nick = ?, email = ? where id = ?")
 	if err != nil {
 		return err
 	}
 	defer statement.Close()
 
-	if _, err = statement.Exec(user.Name, user.Nick, user.Email, ID); err != nil{
+	if _, err = statement.Exec(user.Name, user.Nick, user.Email, ID); err != nil {
 		return err
 	}
 	return nil
@@ -118,22 +118,22 @@ func (repository Users) Delete(ID uint64) error {
 	return nil
 }
 
-func (repository Users) FindByEmail(email string) (models.User, error){
-	 row, err := repository.db.Query("select id, password, email, nick, name from users where email = ?", email)
+func (repository Users) FindByEmail(email string) (models.User, error) {
+	row, err := repository.db.Query("select id, password, email, nick, name from users where email = ?", email)
 
-	 if err != nil {
+	if err != nil {
 		return models.User{}, err
-	 }
-	 defer row.Close()
+	}
+	defer row.Close()
 
-	 var user models.User
+	var user models.User
 
-	 if row.Next() {
-		if err = row.Scan(&user.ID, &user.Password, &user.Email, &user.Nick, &user.Name); err != nil{
+	if row.Next() {
+		if err = row.Scan(&user.ID, &user.Password, &user.Email, &user.Nick, &user.Name); err != nil {
 			return models.User{}, err
 		}
-	 }
-	 return user, nil
+	}
+	return user, nil
 
 }
 
