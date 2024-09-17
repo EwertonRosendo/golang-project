@@ -8,10 +8,9 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"testing"
 	"strconv"
+	"testing"
 )
-
 
 var book_test models.Book
 
@@ -46,13 +45,12 @@ func TestAddBook(t *testing.T) {
 	defer response.Body.Close()
 
 	// Read the response body
-	
+
 	responseBody, err := io.ReadAll(response.Body)
 	if err != nil {
 		t.Fatalf("failed to read response body: %v", err)
 	}
 
-	
 	if err = json.Unmarshal(responseBody, &book); err != nil {
 		t.Fatalf("error reading response body: %v", err)
 	}
@@ -107,7 +105,6 @@ func TestUpdateBook(t *testing.T) {
 		t.Errorf("Expected status code %v, but got %v", expectedStatusCode, response.StatusCode)
 	}
 }
-
 
 func TestGetBooks(t *testing.T) {
 

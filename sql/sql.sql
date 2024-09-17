@@ -3,6 +3,7 @@ USE devbook;
 
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS books;
+DROP TABLE IF EXISTS reviews;
 
 CREATE TABLE users(
     id int auto_increment primary key,
@@ -24,3 +25,14 @@ CREATE TABLE books(
     cover varchar(200) not null unique,
     CreatedAt timestamp default current_timestamp()
 ) ENGINE=INNODB;
+
+CREATE TABLE reviews (
+    id int auto_increment primary key,
+    book_id int NOT NULL,
+    user_id int NOT NULL,
+    status int,
+    rating float,
+    review varchar(400),
+    FOREIGN KEY (book_id) REFERENCES books(id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);

@@ -8,7 +8,7 @@ import (
 )
 
 func Logger(nextFunction http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request){
+	return func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("\n %s %s %s", r.Method, r.RequestURI, r.Host)
 		nextFunction(w, r)
 	}
@@ -22,4 +22,4 @@ func Authenticate(nextFunction http.HandlerFunc) http.HandlerFunc {
 		}
 		nextFunction(w, r)
 	}
-} 
+}

@@ -4,16 +4,16 @@ import (
 	"api/src/config"
 	"errors"
 	"fmt"
+	jwt "github.com/dgrijalva/jwt-go"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
-	"log"
-	jwt "github.com/dgrijalva/jwt-go"
 )
 
 // access token
-func CreateToken(userID uint64) (string, error){
+func CreateToken(userID uint64) (string, error) {
 
 	permissions := jwt.MapClaims{}
 	permissions["authorized"] = true
@@ -23,7 +23,7 @@ func CreateToken(userID uint64) (string, error){
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, permissions)
 
 	return token.SignedString([]byte(config.SecretKey))
-} 
+}
 
 func TokenValidation(r *http.Request) error {
 
@@ -52,7 +52,7 @@ func ExtractUserID(r *http.Request) (uint64, error) {
 			return 0, err
 		}
 		if is_access_token_valid := VerifyAccessToken(r, userID); is_access_token_valid != nil {
-			return 0, errors.New("invalid token")	
+			return 0, errors.New("invalid token")
 		}
 		return userID, nil
 	}
@@ -67,7 +67,7 @@ func extractToken(r *http.Request) string {
 	return ""
 }
 
-func returnVerificationKey(token *jwt.Token) (interface{}, error){
+func returnVerificationKey(token *jwt.Token) (interface{}, error) {
 	if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 		return nil, fmt.Errorf("wrong authentication method detected: %v", token.Header["alg"])
 	}
@@ -76,13 +76,13 @@ func returnVerificationKey(token *jwt.Token) (interface{}, error){
 
 func VerifyAccessToken(r *http.Request, userID uint64) error {
 	cookie, err := r.Cookie(fmt.Sprintf("user_%d", userID))
-    if err != nil {
-        switch {
-        case errors.Is(err, http.ErrNoCookie):
-        default:
-            log.Println(err)
-        }
-    }
+	if err != nil {
+		switch {
+		case errors.Is(err, http.ErrNoCookie):
+		default:
+			log.Println(err)
+		}
+	}
 	stringAccessToken := cookie.Value
 	token, err := jwt.Parse(stringAccessToken, returnVerificationKey)
 	if err != nil {
@@ -97,24 +97,24 @@ func VerifyAccessToken(r *http.Request, userID uint64) error {
 func CreateAccessTokenCookie(w http.ResponseWriter, r *http.Request, userID uint64) {
 	token_name := fmt.Sprintf("user_%d", userID)
 	access_token, err := CreateAcessToken(userID)
-	if err != nil{
+	if err != nil {
 		errors.New("somewthing went wrong during the token creation")
 	}
 
 	cookie := http.Cookie{
-        Name:     token_name,
-        Value:    access_token,
-        Path:     "/",
-        MaxAge:   2450000,
-        HttpOnly: true,
-        Secure:   true,
-        SameSite: http.SameSiteLaxMode,
-    }
+		Name:     token_name,
+		Value:    access_token,
+		Path:     "/",
+		MaxAge:   2450000,
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteLaxMode,
+	}
 
 	http.SetCookie(w, &cookie)
 }
 
-func CreateAcessToken(userID uint64) (string, error){
+func CreateAcessToken(userID uint64) (string, error) {
 
 	permissions_access_token := jwt.MapClaims{}
 	permissions_access_token["authorized"] = true
@@ -124,11 +124,11 @@ func CreateAcessToken(userID uint64) (string, error){
 	access_token := jwt.NewWithClaims(jwt.SigningMethodHS256, permissions_access_token)
 
 	return access_token.SignedString([]byte(config.SecretKey))
-} 
+}
 
 func RefreshToken(r *http.Request, userID uint64) (string, error) {
-	if err := TokenValidation(r); err != nil{
-		
+	if err := TokenValidation(r); err != nil {
+
 		if err := VerifyAccessToken(r, userID); err != nil {
 			return "", err
 		}

@@ -42,7 +42,7 @@ func SaveFile(w http.ResponseWriter, r *http.Request) {
 
 	repository := repositories.NewBookRepository(db)
 	book, err := repository.FindBookById(bookID)
-	if err != nil{
+	if err != nil {
 		responses.ERR(w, http.StatusInternalServerError, err)
 		return
 	}
@@ -58,8 +58,8 @@ func SaveFile(w http.ResponseWriter, r *http.Request) {
 	r.ParseMultipartForm(0)
 	title := r.FormValue("title")
 	title = strings.TrimSpace(title)
-	title = strings.ReplaceAll(title," ", "-")
-	fmt.Println("O TITULO É :    -----",title)
+	title = strings.ReplaceAll(title, " ", "-")
+	fmt.Println("O TITULO É :    -----", title)
 	if err != nil {
 		errStr := fmt.Sprintf("Error in reading the file: %s\n", err)
 		fmt.Println(errStr)
@@ -78,15 +78,14 @@ func SaveFile(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println("tentando remover o arquivo ", book.Thumbnail)
 	err = os.Remove(fmt.Sprintf("static/%s", book.Thumbnail))
-    if err != nil { 
-        responses.ERR(w, http.StatusInternalServerError, err)
+	if err != nil {
+		responses.ERR(w, http.StatusInternalServerError, err)
 		return
-    } 
-	
+	}
 
 	// 3. Create a new file in the images directory
 	//dst, err := os.Create(fmt.Sprintf("images/%s", handler.Filename))
-	dst, err := os.Create(fmt.Sprintf("static/%s", (book.Title+".jpg")))
+	dst, err := os.Create(fmt.Sprintf("static/%s", (book.Title + ".jpg")))
 	if err != nil {
 		errStr := fmt.Sprintf("Error creating file: %s\n", err)
 		fmt.Println(errStr)
@@ -99,7 +98,7 @@ func SaveFile(w http.ResponseWriter, r *http.Request) {
 	if _, err := io.Copy(dst, file); err != nil {
 		responses.ERR(w, http.StatusInternalServerError, err)
 		return
-		
+
 	}
 
 	// 5. Respond to the client that the file was saved successfully
@@ -109,7 +108,7 @@ func SaveFile(w http.ResponseWriter, r *http.Request) {
 		responses.ERR(w, http.StatusInternalServerError, err)
 		return
 	}
-	
+
 	fmt.Fprintf(w, "File uploaded successfully: %s\n", handler.Filename)
 	fmt.Println("File saved successfully")
 }
@@ -122,5 +121,3 @@ func ServeStaticFiles(w http.ResponseWriter, r *http.Request) {
 	// Serve the file from the ./static directory
 	http.ServeFile(w, r, "./static/"+file)
 }
-
-

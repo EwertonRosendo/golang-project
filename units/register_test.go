@@ -18,9 +18,9 @@ var token models.Token
 func TestRegisterUser(t *testing.T) {
 	// Define a new user
 	user := models.User{
-		Name:  "ewerton rosendo da silva",
-		Email: "ewertonrosendodasilva@gmail.com",
-		Nick:  "RosendoSilva",
+		Name:     "ewerton rosendo da silva",
+		Email:    "ewertonrosendodasilva@gmail.com",
+		Nick:     "RosendoSilva",
 		Password: "sgfsd3232",
 	}
 
@@ -68,7 +68,7 @@ func TestRegisterUser(t *testing.T) {
 func TestLoginUser(t *testing.T) {
 	// Define a new user
 	user := models.User{
-		Email: "ewertonrosendodasilva@gmail.com",
+		Email:    "ewertonrosendodasilva@gmail.com",
 		Password: "sgfsd3232",
 	}
 
@@ -167,7 +167,7 @@ func TestUpdateUser(t *testing.T) {
 
 func TestDeleteUser(t *testing.T) {
 	// Example Bearer token (replace this with a valid token)
-	
+
 
 	// Ensure that the user_test contains the registered user
 	if user_test.ID == 0 {
@@ -208,8 +208,6 @@ func TestDeleteUser(t *testing.T) {
 
 func TestCloseTests(t *testing.T) {
 
-
-	
 	// Create a new POST request to register the user
 	request, err := http.NewRequest("GET", "http://localhost:5000/clean_database", nil)
 	if err != nil {

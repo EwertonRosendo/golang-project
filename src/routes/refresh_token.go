@@ -6,16 +6,16 @@ import (
 )
 
 var refresh_token = []Routes{
-	{	
-		URI: "/refresh_token/{user_id}",
-		Method: http.MethodGet,
-		Function: controllers.RefreshToken,
+	{
+		URI:                   "/refresh_token/{user_id}",
+		Method:                http.MethodGet,
+		Function:              controllers.RefreshToken,
 		RequestAuthentication: false,
 	},
 	{
-		URI: "/refresh_token",
-		Method: http.MethodGet,
-		Function: controllers.Teste,
+		URI:                   "/refresh_token",
+		Method:                http.MethodGet,
+		Function:              controllers.Teste,
 		RequestAuthentication: false,
 	},
 }

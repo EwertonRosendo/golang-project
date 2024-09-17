@@ -1,14 +1,13 @@
 package services
 
 import (
+	"api/src/models"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
-	"io"
-	"api/src/models"
-	
 )
 
 // Make the request to the Google Books API
@@ -48,13 +47,13 @@ func FilterGoogleBooks(bookList []byte) []models.Book {
 	var books []models.Book
 	for _, item := range booksResponse.Items {
 		book := models.Book{
-			Title:         item.VolumeInfo.Title,
-			Subtitle:      item.VolumeInfo.Subtitle,
-			Description:   item.VolumeInfo.Description,
-			Authors:       item.VolumeInfo.Authors[0],
+			Title:        item.VolumeInfo.Title,
+			Subtitle:     item.VolumeInfo.Subtitle,
+			Description:  item.VolumeInfo.Description,
+			Authors:      item.VolumeInfo.Authors[0],
 			Published_at: item.VolumeInfo.PublishedDate,
-			Publisher:     item.VolumeInfo.Publisher,
-			Thumbnail:     item.VolumeInfo.ImageLinks.Thumbnail,
+			Publisher:    item.VolumeInfo.Publisher,
+			Thumbnail:    item.VolumeInfo.ImageLinks.Thumbnail,
 		}
 		books = append(books, book)
 	}
