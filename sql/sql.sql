@@ -1,9 +1,10 @@
 CREATE DATABASE IF NOT EXISTS devbook;
 USE devbook;
 
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS books;
+DROP TABLE IF EXISTS comments;
 DROP TABLE IF EXISTS reviews;
+DROP TABLE IF EXISTS books;
+DROP TABLE IF EXISTS users;
 
 CREATE TABLE users(
     id int auto_increment primary key,
@@ -24,7 +25,7 @@ CREATE TABLE books(
     published_at varchar(10),
     cover varchar(200) not null unique,
     CreatedAt timestamp default current_timestamp()
-) ENGINE=INNODB;
+) ENGINE=INNODB;    
 
 CREATE TABLE reviews (
     id int auto_increment primary key,
@@ -34,5 +35,16 @@ CREATE TABLE reviews (
     rating float,
     review varchar(400),
     FOREIGN KEY (book_id) REFERENCES books(id),
-    FOREIGN KEY (user_id) REFERENCES users(id)
-);
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    CreatedAt timestamp default current_timestamp()
+)ENGINE=INNODB;
+
+CREATE TABLE comments (
+    id int auto_increment primary key,
+    review_id int NOT NULL,
+    user_id int NOT NULL,
+    comment varchar(400),
+    FOREIGN KEY (review_id) REFERENCES reviews(id),
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    CreatedAt timestamp default current_timestamp()
+)ENGINE=INNODB;

@@ -13,7 +13,7 @@ var files = []Routes{
 		RequestAuthentication: false,
 	},
 	{
-		URI:                   "/static/{file}", // New route for serving static files
+		URI:                   "/static/{file}",
 		Method:                http.MethodGet,
 		Function:              controllers.ServeStaticFiles,
 		RequestAuthentication: false,
