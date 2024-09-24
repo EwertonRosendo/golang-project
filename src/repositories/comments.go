@@ -41,7 +41,7 @@ func (repository Comments) SearchComments(ID uint64) ([]models.Comment, error) {
 	rows, err := repository.db.Query(
 		"SELECT comments.id, comments.comment, comments.CreatedAt, reviews.id, users.nick, users.id FROM comments JOIN users ON comments.user_id = users.id JOIN reviews ON comments.review_id = reviews.id where reviews.id =  ? ;",
 		ID,
-	) // <--- This parenthesis was missing.
+	) 
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +49,7 @@ func (repository Comments) SearchComments(ID uint64) ([]models.Comment, error) {
 
 	var comments []models.Comment
 
-	for rows.Next() { // Corrected `rows.next()` to `rows.Next()`
+	for rows.Next() {
 		var comment models.Comment
 		if err = rows.Scan(
 			&comment.ID,

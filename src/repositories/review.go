@@ -39,7 +39,7 @@ func (repository Reviews) SearchReviews() ([]models.Review, error) {
 
 	rows, err := repository.db.Query(
 		"SELECT users.id, users.nick, users.name,books.id, books.title, books.cover, books.author,reviews.id, reviews.status, reviews.rating, reviews.review FROM reviews JOIN users ON reviews.user_id = users.id JOIN books ON reviews.book_id = books.id;",
-	) // <--- This parenthesis was missing.
+	) 
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +47,7 @@ func (repository Reviews) SearchReviews() ([]models.Review, error) {
 
 	var reviews []models.Review
 
-	for rows.Next() { // Corrected `rows.next()` to `rows.Next()`
+	for rows.Next() { 
 		var review models.Review
 		if err = rows.Scan(
 			&review.User.ID,
@@ -73,8 +73,8 @@ func (repository Reviews) FindReviewsByUser(ID uint64) ([]models.Review, error) 
 
 	rows, err := repository.db.Query(
 		"SELECT users.id, users.nick, users.name,books.id, books.title, books.cover, books.author,reviews.id, reviews.status, reviews.rating, reviews.review FROM reviews JOIN users ON reviews.user_id = users.id JOIN books ON reviews.book_id = books.id where users.id = ?;",
-		 ID,
-	) // <--- This parenthesis was missing.
+		ID,
+	) 
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +82,7 @@ func (repository Reviews) FindReviewsByUser(ID uint64) ([]models.Review, error) 
 
 	var reviews []models.Review
 
-	for rows.Next() { // Corrected `rows.next()` to `rows.Next()`
+	for rows.Next() { 
 		var review models.Review
 		if err = rows.Scan(
 			&review.User.ID,
