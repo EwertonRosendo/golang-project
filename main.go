@@ -5,11 +5,12 @@ import (
 	"api/src/config"
 	//"encoding/base64"
 	"fmt"
+	"github.com/rs/cors"
 	"log"
 	"net/http"
-	"github.com/rs/cors"
 	//"crypto/rand"
 )
+
 /*
 func init(){
 	key := make([]byte, 64)
@@ -24,19 +25,18 @@ func init(){
 
 func main() {
 
-    config.Load()
-    r := router.Generate()
+	config.Load()
+	r := router.Generate()
 
-    c := cors.New(cors.Options{
-        AllowedOrigins:   []string{"http://localhost:8000"},  // Replace with the actual domain
-        AllowCredentials: true,
-        AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
-        AllowedHeaders:   []string{"Authorization", "Content-Type"}, // Explicitly allow Authorization header
-    })
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:8000"},
+		AllowCredentials: true,
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
+		AllowedHeaders:   []string{"Authorization", "Content-Type"},
+	})
 
-    handler := c.Handler(r)
+	handler := c.Handler(r)
 
-    fmt.Printf("listening on port: 5000")
-    log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.Port), handler))
+	fmt.Printf("listening on port: 5000")
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.Port), handler))
 }
-
