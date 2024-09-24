@@ -7,7 +7,7 @@ import (
 
 var reviews = []Routes{
 	{
-		URI:                   "/reviews/{review_id}",
+		URI:                   "/reviews/{review_id}/user/{user_id}",
 		Method:                http.MethodDelete,
 		Function:              controllers.DeleteReview,
 		RequestAuthentication: true,

@@ -3,7 +3,6 @@ package repositories
 import (
 	"api/src/models"
 	"database/sql"
-	"fmt"
 )
 
 type Comments struct {
@@ -16,7 +15,6 @@ func NewCommentRepository(db *sql.DB) *Comments {
 
 func (repository Comments) Create(comment models.Comment) (uint64, error) {
 	statement, err := repository.db.Prepare("insert into comments (review_id, user_id, comment) values (?, ?, ?)")
-	fmt.Println(comment)
 	if err != nil {
 		return 0, err
 	}
@@ -37,7 +35,7 @@ func (repository Comments) Create(comment models.Comment) (uint64, error) {
 }
 
 func (repository Comments) SearchComments(ID uint64) ([]models.Comment, error) {
-	fmt.Println("review id: ", ID)
+
 	rows, err := repository.db.Query(
 		"SELECT comments.id, comments.comment, comments.CreatedAt, reviews.id, users.nick, users.id FROM comments JOIN users ON comments.user_id = users.id JOIN reviews ON comments.review_id = reviews.id where reviews.id =  ? ;",
 		ID,

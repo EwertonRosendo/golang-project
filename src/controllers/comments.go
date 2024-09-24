@@ -5,14 +5,13 @@ import (
 	"api/src/models"
 	"api/src/repositories"
 	"api/src/responses"
-	"fmt"
-	//"os"
-	//"api/src/services"
-	"strconv"
+	"api/src/services"
 	"encoding/json"
+	"fmt"
+	"github.com/gorilla/mux"
 	"io"
 	"net/http"
-	"github.com/gorilla/mux"
+	"strconv"
 )
 
 func SearchComments(w http.ResponseWriter, r *http.Request) {
@@ -59,8 +58,6 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("Comment: ", comment)
-
 	db, err := database.Connect()
 	if err != nil {
 		responses.ERR(w, http.StatusInternalServerError, err)
@@ -75,12 +72,18 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 		responses.ERR(w, http.StatusInternalServerError, err)
 		return
 	}
-
 	responses.JSON(w, http.StatusCreated, comment)
 }
 
-func DeleteComment (w http.ResponseWriter, r *http.Request) {
+func DeleteComment(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
+
+	err := services.ValidateUser(r)
+	if err != nil {
+		responses.ERR(w, http.StatusUnauthorized, err)
+		return
+	}
+
 	commentID, err := strconv.ParseUint(params["comment_id"], 10, 64)
 
 	if err != nil {
@@ -99,6 +102,5 @@ func DeleteComment (w http.ResponseWriter, r *http.Request) {
 		responses.ERR(w, http.StatusInternalServerError, err)
 		return
 	}
-
 	responses.JSON(w, http.StatusNoContent, nil)
 }

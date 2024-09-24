@@ -19,7 +19,7 @@ var comments = []Routes{
 		RequestAuthentication: false,
 	},
 	{
-		URI:                   "/comments/{comment_id}",
+		URI:                   "/comments/{comment_id}/user/{user_id}",
 		Method:                http.MethodDelete,
 		Function:              controllers.DeleteComment,
 		RequestAuthentication: true,

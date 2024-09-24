@@ -5,20 +5,16 @@ import (
 	"api/src/models"
 	"api/src/repositories"
 	"api/src/responses"
-	"fmt"
-	//"os"
-	//"api/src/services"
-	"strconv"
+	"api/src/services"
 	"encoding/json"
+	"github.com/gorilla/mux"
 	"io"
 	"net/http"
-	"github.com/gorilla/mux"
+	"strconv"
 )
 
 func AddReview(w http.ResponseWriter, r *http.Request) {
 	bodyRequest, err := io.ReadAll(r.Body)
-
-	fmt.Println("params: ", string(bodyRequest))
 
 	if err != nil {
 		responses.ERR(w, http.StatusUnprocessableEntity, err)
@@ -52,6 +48,13 @@ func AddReview(w http.ResponseWriter, r *http.Request) {
 
 func DeleteReview(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
+
+	err := services.ValidateUser(r)
+	if err != nil {
+		responses.ERR(w, http.StatusUnauthorized, err)
+		return
+	}
+
 	reviewID, err := strconv.ParseUint(params["review_id"], 10, 64)
 
 	if err != nil {
