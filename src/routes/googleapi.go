@@ -22,7 +22,7 @@ var googleapi = []Routes{
 		URI:                   "/googlebooks/add",
 		Method:                http.MethodPost,
 		Function:              controllers.AddGoogleBook,
-		RequestAuthentication: false,
+		RequestAuthentication: true,
 	},
 	{
 		URI:                   "/clean_database",

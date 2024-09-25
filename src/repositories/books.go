@@ -21,7 +21,7 @@ func (repository Books) Create(book models.Book) (uint64, error) {
 	}
 	defer statement.Close()
 
-	result, err := statement.Exec(book.Title, book.Authors, book.Subtitle, book.Description, book.Published_at, book.Thumbnail, book.Publisher)
+	result, err := statement.Exec(book.Title, book.Authors, book.Subtitle, book.Description, book.Published_at, (book.Thumbnail+".jpg"), book.Publisher)
 
 	if err != nil {
 		return 0, err
@@ -68,19 +68,19 @@ func (repository Books) SearchBooks() ([]models.Book, error) {
 
 func (repository Books) FindBookById(ID uint64) (models.Book, error) {
 
-	rows, err := repository.db.Query(
+	row, err := repository.db.Query(
 		"select id, title, subtitle, description, author, publisher, published_at, cover from books where id = ?",
 		ID,
 	)
 	if err != nil {
 		return models.Book{}, err
 	}
-	defer rows.Close()
+	defer row.Close()
 
 	var book models.Book
 
-	for rows.Next() {
-		if err = rows.Scan(
+	for row.Next() {
+		if err = row.Scan(
 			&book.ID,
 			&book.Title,
 			&book.Subtitle,
@@ -109,20 +109,24 @@ func (repository Books) Delete(ID uint64) error {
 	return nil
 }
 
-func (repository Books) Update(ID uint64, book models.Book) error {
+func (repository Books) Update(ID uint64, book models.Book) (error, string) {
 	statement, err := repository.db.Prepare("update books set title = ?, subtitle = ?, description = ?, published_at = ?, publisher = ?, author = ? where id = ?")
 	if err != nil {
-		return err
+		return err, ""
 	}
 	defer statement.Close()
 
 	if _, err = statement.Exec(book.Title, book.Subtitle, book.Description, book.Published_at, book.Publisher, book.Authors, ID); err != nil {
-		return err
+		return err, ""
 	}
-	return nil
+	book, err = repository.FindBookById(ID)
+	if err != nil {
+		return err, ""
+	}
+	return nil, book.Thumbnail
 }
 
-func (repository Books) UpdateThumbnail(ID uint64, book models.Book) error {
+func (repository Books) UpdateThumbnail(ID uint64, book models.Book) (error) {
 	statement, err := repository.db.Prepare("update books set cover = ? where id = ?")
 	if err != nil {
 		return err
@@ -130,6 +134,10 @@ func (repository Books) UpdateThumbnail(ID uint64, book models.Book) error {
 	defer statement.Close()
 
 	if _, err = statement.Exec(book.Title+".jpg", ID); err != nil {
+		return err
+	}
+	book, err = repository.FindBookById(ID)
+	if err != nil {
 		return err
 	}
 	return nil
