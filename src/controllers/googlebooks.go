@@ -10,8 +10,9 @@ import (
 	"io"
 	"net/http"
 	"os"
-
+	"regexp"
 	"github.com/gorilla/mux"
+	"strings"
 )
 
 // Handle the /googlebooks endpoint
@@ -56,8 +57,10 @@ func AddGoogleBook(w http.ResponseWriter, r *http.Request) {
 		responses.ERR(w, http.StatusBadRequest, err)
 		return
 	}
-
-	out, err := os.Create("static/" + book.Title + ".jpg")
+	thumbnail := regexp.MustCompile(`[^a-zA-Z0-9 ]+`).ReplaceAllString(book.Title, " ")
+	thumbnail = strings.TrimSpace(thumbnail)
+	
+	out, err := os.Create("static/" + thumbnail+".jpg")
 	if err != nil {
 		responses.ERR(w, http.StatusInternalServerError, err)
 		return
@@ -75,7 +78,7 @@ func AddGoogleBook(w http.ResponseWriter, r *http.Request) {
 		responses.ERR(w, http.StatusInternalServerError, err)
 		return
 	}
-
+	book.Thumbnail = thumbnail
 	book.FormatBook()
 
 	db, err := database.Connect()

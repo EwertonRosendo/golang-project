@@ -32,8 +32,6 @@ func (book *Book) FormatBook() {
 	if len(book.Publisher) > 99 {
 		book.Publisher = book.Publisher[0:99]
 	}
-	book.Thumbnail = (book.Title + ".jpg")
-
 	book.Published_at = strings.TrimSpace(book.Published_at)
 	book.Thumbnail = strings.TrimSpace(book.Thumbnail)
 	//need to format the list of author

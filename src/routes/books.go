@@ -10,7 +10,7 @@ var books = []Routes{
 		URI:                   "/books/{book_id}",
 		Method:                http.MethodDelete,
 		Function:              controllers.DeleteBook,
-		RequestAuthentication: false,
+		RequestAuthentication: true,
 	},
 	{
 		URI:                   "/books",
@@ -34,12 +34,12 @@ var books = []Routes{
 		URI:                   "/books",
 		Method:                http.MethodPost,
 		Function:              controllers.AddBookWithFile,
-		RequestAuthentication: false,
+		RequestAuthentication: true,
 	},
 	{
 		URI:                   "/books/{book_id}",
 		Method:                http.MethodPut,
 		Function:              controllers.UpdateBookWithFile,
-		RequestAuthentication: false,
+		RequestAuthentication: true,
 	},
 }

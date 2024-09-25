@@ -45,7 +45,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		responses.ERR(w, http.StatusUnauthorized, err)
 		return
 	}
-	authentication.CreateAccessTokenCookie(w, r, userFromDataBase.ID)
+	
 
 	token, err := authentication.CreateToken(userFromDataBase.ID)
 	if err != nil {
