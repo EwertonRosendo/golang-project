@@ -8,7 +8,6 @@ import (
 )
 
 func TestGoogleDefaultEndpoint(t *testing.T) {
-	// Set up a new request.
 	req, err := http.NewRequest("GET", "/googlebooks", nil)
 	if err != nil {
 		t.Fatal(err)
@@ -25,7 +24,6 @@ func TestGoogleDefaultEndpoint(t *testing.T) {
 }
 
 func TestGoogleWithParamsEndpoint(t *testing.T) {
-	// Set up a new request.
 	req, err := http.NewRequest("GET", "/googlebooks/ruby", nil)
 	if err != nil {
 		t.Fatal(err)
@@ -42,7 +40,6 @@ func TestGoogleWithParamsEndpoint(t *testing.T) {
 }
 
 func TestGoogleWithWrongUrl(t *testing.T) {
-	// Set up a new request.
 	req, err := http.NewRequest("GET", "/googlebooks/", nil)
 	if err != nil {
 		t.Fatal(err)

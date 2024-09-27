@@ -32,44 +32,34 @@ func TestValidatePassword(t *testing.T) {
 }
 
 func TestUserAuthenticy(t *testing.T) {
-	// Step 1: Create a token for the request
 	token, err := authentication.CreateToken(1)
 	if err != nil {
 		t.Error("Error when tried to create a token: ", err)
 	}
 
-	// Step 2: Set up a body for the request (e.g., user data in JSON format)
 	userData := map[string]interface{}{
 		"user_id": 1,
 		"email": "exampleUser",
 		"password": "examplePassword",
 	}
 
-	// Marshal the user data into a JSON byte array
 	bodyBytes, err := json.Marshal(userData)
 	if err != nil {
 		t.Error("Error when marshaling user data: ", err)
 	}
 
-	// Step 3: Create the HTTP request
 	req, err := http.NewRequest("POST", "/reviews/1/user?user_id=1", bytes.NewBuffer(bodyBytes)) // POST is typical for auth requests
 	if err != nil {
 		t.Error("Error creating request: ", err)
 	}
 
-	// Step 4: Set the Authorization header with the token
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
 
-	// Step 5: Set the Content-Type header to JSON
 	req.Header.Set("Content-Type", "application/json")
 
-	// Step 6: Call your validation service
-	err = services.ValidateUser(req) // Assuming ValidateUser accepts *http.Request
+	err = services.ValidateUser(req)
 
-	// Step 7: Check for errors
 	if err != nil {
 		t.Error("Error validating user: ", err)
 	}
 }
-
-
