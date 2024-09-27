@@ -5,13 +5,9 @@ import (
 	"api/src/models"
 	"api/src/repositories"
 	"api/src/responses"
-	"errors"
 	"fmt"
 	"os"
-
-	//"api/src/services"
 	"encoding/json"
-
 	"github.com/gorilla/mux"
 	"strings"
 	"io"
@@ -47,9 +43,6 @@ func FindBookById(w http.ResponseWriter, r *http.Request) {
 
 	bookID, err := strconv.ParseUint(params["book_id"], 10, 64)
 
-	fmt.Println("o id do livro buscado é: ")
-	fmt.Print(bookID)
-
 	if err != nil {
 		responses.ERR(w, http.StatusBadRequest, err)
 		return
@@ -75,8 +68,6 @@ func FindBookById(w http.ResponseWriter, r *http.Request) {
 func DeleteBook(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	bookID, err := strconv.ParseUint(params["book_id"], 10, 64)
-
-	fmt.Println(bookID)
 
 	if err != nil {
 		responses.ERR(w, http.StatusBadRequest, err)
@@ -130,13 +121,13 @@ func UpdateBook(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	repository := repositories.NewBookRepository(db)
-	var thumbnail string
-	if err, thumbnail = repository.Update(bookID, book); err != nil {
+	
+	if err, _ = repository.Update(bookID, book); err != nil {
 		responses.ERR(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	fmt.Print(thumbnail)
+	
 
 	responses.JSON(w, http.StatusNoContent, nil)
 }
@@ -200,8 +191,6 @@ func AddBookWithFile(w http.ResponseWriter, r *http.Request) {
 	}
 	responses.JSON(w, http.StatusCreated, book)
 	fmt.Fprintf(w, "File uploaded successfully: %s\n", handler.Filename)
-	fmt.Println("File saved successfully")
-	
 }
 
 func UpdateBookWithFile(w http.ResponseWriter, r *http.Request) {
@@ -246,9 +235,9 @@ func UpdateBookWithFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Handle file upload
-	file, handler, err := r.FormFile("form-id")
+	file, _, err := r.FormFile("form-id")
 	if err != nil {
-		responses.ERR(w, http.StatusBadRequest, errors.New("no file provided or something went wrong"))
+		responses.JSON(w, http.StatusOK, "File uploaded and saved successfully")
 		return
 	}
 	defer file.Close()
@@ -278,6 +267,5 @@ func UpdateBookWithFile(w http.ResponseWriter, r *http.Request) {
 
 	// Respond with success
 	responses.JSON(w, http.StatusOK, "File uploaded and saved successfully")
-	fmt.Printf("File uploaded successfully: %s\n", handler.Filename)
 }
 

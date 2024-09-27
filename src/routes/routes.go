@@ -18,6 +18,7 @@ func Config(r *mux.Router) *mux.Router {
 	routes := usersRoutes
 	routes = append(routes, loginRoute)
 	routes = append(routes, reviews...)
+	routes = append(routes, files...)
 	routes = append(routes, books...)
 	routes = append(routes, comments...)
 	routes = append(routes, googleapi...)
