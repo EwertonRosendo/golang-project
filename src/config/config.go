@@ -32,3 +32,4 @@ func Load() {
 	)
 	SecretKey = []byte(os.Getenv("SECRET_KEY"))
 }
+
