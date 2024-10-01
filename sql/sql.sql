@@ -19,9 +19,9 @@ CREATE TABLE books(
     id int auto_increment primary key,
     title varchar(200) not null unique,
     subtitle varchar(200),
-    description varchar(500),
+    description text,
     author varchar(200) not null ,
-    publisher varchar(100),
+    publisher varchar(100), 
     published_at varchar(10),
     cover varchar(200) not null unique,
     CreatedAt timestamp default current_timestamp()

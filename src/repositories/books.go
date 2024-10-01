@@ -38,8 +38,8 @@ func (repository Books) Create(book models.Book) (uint64, error) {
 func (repository Books) SearchBooks() ([]models.Book, error) {
 
 	rows, err := repository.db.Query(
-		"select id, title, subtitle, description, author, publisher, published_at, cover from books",
-	) // <--- This parenthesis was missing.
+		"select id, title, subtitle, description, author, publisher, published_at, cover from books ORDER BY CreatedAt DESC",
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +47,7 @@ func (repository Books) SearchBooks() ([]models.Book, error) {
 
 	var books []models.Book
 
-	for rows.Next() { // Corrected `rows.next()` to `rows.Next()`
+	for rows.Next() { 
 		var book models.Book
 		if err = rows.Scan(
 			&book.ID,

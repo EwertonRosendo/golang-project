@@ -151,6 +151,21 @@ func AddBookWithFile(w http.ResponseWriter, r *http.Request) {
 	r.ParseMultipartForm(0)
 	var book models.Book
 
+	title := r.FormValue("title")
+	author := r.FormValue("author")
+	subtitle := r.FormValue("subtitle")
+	publisher := r.FormValue("publisher")
+	publishedAt := r.FormValue("published_at")
+	description := r.FormValue("description")
+
+	// Print the form data
+	fmt.Printf("Title: %s\n", title)
+	fmt.Printf("Author: %s\n", author)
+	fmt.Printf("Subtitle: %s\n", subtitle)
+	fmt.Printf("Publisher: %s\n", publisher)
+	fmt.Printf("Published At: %s\n", publishedAt)
+	fmt.Printf("Description: %s\n", description)
+
 	book.Title = r.FormValue("title")
 	book.Subtitle = r.FormValue("subtitle")
 	book.Description = r.FormValue("description")
